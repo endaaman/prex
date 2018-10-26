@@ -1,13 +1,19 @@
 #define _GNU_SOURCE
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <fcntl.h>
+#include <pty.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 int main(int argc, char* argv[])
 {
   // get the master fd
-  int masterfd = open("/dev/ptmx", O_RDWR | O_NOCTTY);
+  /* int masterfd = open("/dev/ptmx", O_RDWR | O_NOCTTY); */
+
+  int masterfd;
+  int slavefd;
+  openpty(&masterfd, &slavefd, NULL, NULL, NULL);
   if (masterfd < 0)
   {
     perror("getpt");
