@@ -1,4 +1,6 @@
 extern crate nix;
+extern crate ncurses;
+extern crate rlua;
 
 
 fn main() {
@@ -27,8 +29,34 @@ fn main() {
     println!("{}", ptsname);
 
 
-    // if .is_ok() {
-    //     perror("grantpt");
-    //     exit(1);
-    // }
+    ncurses::initscr();
+
+    /* Print to the back buffer. */
+    ncurses::printw("Hello, world!");
+
+    /* Print some unicode(Chinese) string. */
+    // printw("Great Firewall dislike VPN protocol.\nGFW 不喜欢 VPN 协议。");
+
+    /* Update the screen. */
+    ncurses::refresh();
+
+    /* Wait for a key press. */
+    ncurses::getch();
+
+    /* Terminate ncurses. */
+    ncurses::endwin();
+
+    let lua = rlua::Lua::new();
+    match lua.eval::<_, ()>(
+        r#"
+        local t = {
+            hoge = 'hello'
+        }
+        print(t.hoge)
+        "#,
+        None,
+    )  {
+        Ok(_) => {  },
+        Err(why) => { panic!(why.to_string()) },
+    }
 }
